@@ -35,7 +35,7 @@ public class BulletManager : MonoBehaviour
         newBullet = m_playerBulletPool.Dequeue();
         newBullet.SetActive(true);
         newBullet.transform.position = position;
-        newBullet.GetComponent<BulletBehaviour>().direction = direction;
+        newBullet.GetComponent<CubeBehaviour>().direction = direction;
 
         return newBullet;
     }

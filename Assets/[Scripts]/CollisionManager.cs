@@ -29,6 +29,15 @@ public class CollisionManager : MonoBehaviour
     {
         spheres = FindObjectsOfType<BulletBehaviour>();
 
+        cubes = FindObjectsOfType<CubeBehaviour>();
+
+        faces = new Vector3[]
+        {
+            Vector3.left, Vector3.right,
+            Vector3.down, Vector3.up,
+            Vector3.back , Vector3.forward
+        };
+
         // check each AABB with every other AABB in the scene
         for (int i = 0; i < cubes.Length; i++)
         {
@@ -53,6 +62,7 @@ public class CollisionManager : MonoBehaviour
                 
             }
         }
+
 
 
     }
@@ -120,6 +130,24 @@ public class CollisionManager : MonoBehaviour
             s.direction = new Vector3(s.direction.x, -s.direction.y, s.direction.z);
         }
     }
+
+    private static void CubeReflect(Contact s, CubeBehaviour a)
+    {
+        if ((s.collisionNormal == Vector3.forward) || (s.collisionNormal == Vector3.back))
+        {
+            a.direction = new Vector3(a.direction.x, a.direction.y, -a.direction.z);
+        }
+        else if ((s.collisionNormal == Vector3.right) || (s.collisionNormal == Vector3.left))
+        {
+            a.direction = new Vector3(-a.direction.x, a.direction.y, a.direction.z);
+        }
+        else if ((s.collisionNormal == Vector3.up) || (s.collisionNormal == Vector3.down))
+        {
+            a.direction = new Vector3(a.direction.x, -a.direction.y, a.direction.z);
+        }
+    }
+
+
 
     public static void CheckAABBs(CubeBehaviour a, CubeBehaviour b)
     {
@@ -228,6 +256,7 @@ public class CollisionManager : MonoBehaviour
                     normal = new Vector3(0, 0, Mathf.Sign(displacementAB.z));
 
                 }
+                contactB.collisionNormal = normal;
                 minimumTranslationVectorAtoB = normal * contactB.penetration;
                 contactPoint = a.transform.position + minimumTranslationVectorAtoB;
                 Vector3 translationVectorA = -minimumTranslationVectorAtoB * movementScaleA;
@@ -237,7 +266,7 @@ public class CollisionManager : MonoBehaviour
                 // add the new contact
                 a.contacts.Add(contactB);
                 a.isColliding = true;
-                
+                CubeReflect(contactB, b);
             }
            
     

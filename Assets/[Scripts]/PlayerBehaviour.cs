@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -31,6 +32,11 @@ public class PlayerBehaviour : MonoBehaviour
     {
         _Fire();
         _Move();
+        if(Input.GetAxisRaw("Back") >0.0f)
+        {
+            SceneManager.LoadScene("Start");
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     private void _Move()

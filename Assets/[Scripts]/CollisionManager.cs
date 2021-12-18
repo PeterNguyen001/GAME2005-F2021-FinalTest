@@ -130,7 +130,7 @@ public class CollisionManager : MonoBehaviour
             s.direction = new Vector3(s.direction.x, -s.direction.y, s.direction.z);
         }
     }
-
+    //AABBs reflect
     private static void CubeReflect(Contact s, CubeBehaviour a)
     {
         if ((s.collisionNormal == Vector3.forward) || (s.collisionNormal == Vector3.back))
@@ -243,14 +243,14 @@ public class CollisionManager : MonoBehaviour
                    
                 }
 
-                else if (contactB.face == faces[0] || contactB.face == faces[1])
+                else if (contactB.face == Vector3.left || contactB.face == Vector3.right)
                 {
 
                     normal = new Vector3(Mathf.Sign(displacementAB.x), 0, 0);
 
                 }
 
-                else if (contactB.face == faces[4] || contactB.face == faces[5])
+                else if (contactB.face == Vector3.back || contactB.face == Vector3.forward)
                 {
 
                     normal = new Vector3(0, 0, Mathf.Sign(displacementAB.z));

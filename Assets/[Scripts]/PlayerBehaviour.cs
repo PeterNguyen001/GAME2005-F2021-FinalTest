@@ -73,12 +73,45 @@ public class PlayerBehaviour : MonoBehaviour
 
             if (Input.GetAxisRaw("Jump") > 0.0f)
             {
-                body.velocity += transform.up * speed * 0.1f * Time.deltaTime;
+                body.velocity += transform.up * speed * 0.1f * Time.deltaTime * 5 ;
             }
 
             transform.position += body.velocity;
         }
+        else
+        {
+            if (Input.GetAxisRaw("Horizontal") > 0.0f)
+            {
+                // move right
+                body.velocity = playerCam.transform.right * speed * Time.deltaTime;
+            }
+
+            if (Input.GetAxisRaw("Horizontal") < 0.0f)
+            {
+                // move left
+                body.velocity = -playerCam.transform.right * speed * Time.deltaTime;
+            }
+
+            if (Input.GetAxisRaw("Vertical") > 0.0f)
+            {
+                // move forward
+                body.velocity = playerCam.transform.forward * speed * Time.deltaTime;
+            }
+
+            if (Input.GetAxisRaw("Vertical") < 0.0f)
+            {
+                // move Back
+                body.velocity = -playerCam.transform.forward * speed * Time.deltaTime;
+            }
+
+            body.velocity = Vector3.Lerp(body.velocity, Vector3.zero, 0.9f)/2;
+            body.velocity = new Vector3(body.velocity.x, 0.0f, body.velocity.z)/2; // remove y
+
+            transform.position += body.velocity/2;
+        }
     }
+
+ 
 
 
     private void _Fire()

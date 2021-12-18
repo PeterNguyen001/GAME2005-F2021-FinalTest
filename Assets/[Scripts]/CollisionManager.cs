@@ -121,10 +121,11 @@ public class CollisionManager : MonoBehaviour
         }
     }
 
-
     public static void CheckAABBs(CubeBehaviour a, CubeBehaviour b)
     {
         Contact contactB = new Contact(b);
+
+        Vector3 displacementAB = b.transform.position - a.transform.position;
 
         if ((a.min.x <= b.max.x && a.max.x >= b.min.x) &&
             (a.min.y <= b.max.y && a.max.y >= b.min.y) &&
@@ -143,6 +144,9 @@ public class CollisionManager : MonoBehaviour
 
             float penetration = float.MaxValue;
             Vector3 face = Vector3.zero;
+            Vector3 normal;
+            Vector3 minimumTranslationVectorAtoB;
+            Vector3 contactPoint;
 
             // check each face to see if it is the one that connected
             for (int i = 0; i < 6; i++)
@@ -158,6 +162,29 @@ public class CollisionManager : MonoBehaviour
             // set the contact properties
             contactB.face = face;
             contactB.penetration = penetration;
+            float movementScaleA = 0;
+            float movementScaleB = 0;
+
+            if (a.gameObject.GetComponent<RigidBody3D>().GetBody() == BodyType.DYNAMIC && b.gameObject.GetComponent<RigidBody3D>().GetBody() == BodyType.STATIC)
+            {
+                movementScaleA = 0.5f;
+                movementScaleB = 0;
+            }
+            else if (a.gameObject.GetComponent<RigidBody3D>().GetBody() == BodyType.STATIC && b.gameObject.GetComponent<RigidBody3D>().GetBody() == BodyType.DYNAMIC)
+            {
+                movementScaleA = 0;
+                movementScaleB = 0.5f;
+            }
+            else if (a.gameObject.GetComponent<RigidBody3D>().GetBody() == BodyType.DYNAMIC && b.gameObject.GetComponent<RigidBody3D>().GetBody() == BodyType.DYNAMIC)
+            {
+                movementScaleA = 0.5f;
+                movementScaleB = 0.5f;
+            }
+            else
+            {
+                movementScaleA = 0;
+                movementScaleB = 0;
+            }
 
 
             // check if contact does not exist
@@ -171,38 +198,49 @@ public class CollisionManager : MonoBehaviour
                         a.contacts.RemoveAt(i);
                     }
                 }
-
+                normal = new Vector3(Mathf.Sign(displacementAB.x), 0, 0);
                 if (contactB.face == Vector3.down)
                 {
                     a.gameObject.GetComponent<RigidBody3D>().Stop();
                     a.isGrounded = true;
                 }
+                else
+                {
+                    a.isGrounded = false;
+                }
+                if (contactB.face == Vector3.down || contactB.face == Vector3.up)
+                {
+    
+                    normal = new Vector3(0, Mathf.Sign(displacementAB.y), 0);
+                   
+                }
 
-                //else if (contactB.face == Vector3.right)
-                //{
-                //    a.gameObject.GetComponent<RigidBody3D>().Stop();
-                //}
+                else if (contactB.face == faces[0] || contactB.face == faces[1])
+                {
 
-                //else if (contactB.face == Vector3.left)
-                //{
-                //    a.gameObject.GetComponent<RigidBody3D>().Stop();
-                //}
+                    normal = new Vector3(Mathf.Sign(displacementAB.x), 0, 0);
 
-                //else if (contactB.face == Vector3.forward)
-                //{
-                //    a.gameObject.GetComponent<RigidBody3D>().Stop();
-                //}
+                }
 
-                //else if (contactB.face == Vector3.back)
-                //{
-                //    a.gameObject.GetComponent<RigidBody3D>().Stop();
-                //}
+                else if (contactB.face == faces[4] || contactB.face == faces[5])
+                {
 
+                    normal = new Vector3(0, 0, Mathf.Sign(displacementAB.z));
+
+                }
+                minimumTranslationVectorAtoB = normal * contactB.penetration;
+                contactPoint = a.transform.position + minimumTranslationVectorAtoB;
+                Vector3 translationVectorA = -minimumTranslationVectorAtoB * movementScaleA;
+                Vector3 translationVectorB = minimumTranslationVectorAtoB * movementScaleB;
+                a.transform.position += translationVectorA;
+                b.transform.position += translationVectorB;
                 // add the new contact
                 a.contacts.Add(contactB);
                 a.isColliding = true;
                 
             }
+           
+    
         }
         else
         {
@@ -219,5 +257,6 @@ public class CollisionManager : MonoBehaviour
                 }
             }
         }
+        
     }
 }

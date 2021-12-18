@@ -65,4 +65,9 @@ public class RigidBody3D : MonoBehaviour
         timer = 0;
         isFalling = false;
     }
+
+    public BodyType GetBody()
+    {
+        return bodyType;
+    }
 }

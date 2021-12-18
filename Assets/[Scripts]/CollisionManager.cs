@@ -131,14 +131,15 @@ public class CollisionManager : MonoBehaviour
             (a.min.z <= b.max.z && a.max.z >= b.min.z))
         {
             // determine the distances between the contact extents
-            float[] distances = {
-                (b.max.x - a.min.x),
-                (a.max.x - b.min.x),
-                (b.max.y - a.min.y),
-                (a.max.y - b.min.y),
-                (b.max.z - a.min.z),
-                (a.max.z - b.min.z)
-            };
+            float[] distances = 
+                {
+                     (b.max.x - a.min.x),
+                     (a.max.x - b.min.x),
+                     (b.max.y - a.min.y),
+                     (a.max.y - b.min.y),
+                     (b.max.z - a.min.z),
+                     (a.max.z - b.min.z)
+                };
 
             float penetration = float.MaxValue;
             Vector3 face = Vector3.zero;
@@ -176,7 +177,26 @@ public class CollisionManager : MonoBehaviour
                     a.gameObject.GetComponent<RigidBody3D>().Stop();
                     a.isGrounded = true;
                 }
-                
+
+                //else if (contactB.face == Vector3.right)
+                //{
+                //    a.gameObject.GetComponent<RigidBody3D>().Stop();
+                //}
+
+                //else if (contactB.face == Vector3.left)
+                //{
+                //    a.gameObject.GetComponent<RigidBody3D>().Stop();
+                //}
+
+                //else if (contactB.face == Vector3.forward)
+                //{
+                //    a.gameObject.GetComponent<RigidBody3D>().Stop();
+                //}
+
+                //else if (contactB.face == Vector3.back)
+                //{
+                //    a.gameObject.GetComponent<RigidBody3D>().Stop();
+                //}
 
                 // add the new contact
                 a.contacts.Add(contactB);
